@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ## ============================================================================
 ##                   **** SEED Virtual Reality Platform ****
 ##                Copyright (C) 2019-2020, Suisei Entertainment
@@ -18,6 +20,4 @@
 ##
 ## ============================================================================
 
-"""
-Top level module of all Suisei Entertainment code.
-"""
+python setup.py bdist_wheel

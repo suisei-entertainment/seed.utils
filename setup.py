@@ -36,7 +36,12 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/suisei-ent/seed.utils',
-    packages=setuptools.find_packages(),
+    namespace_packages=[
+        'suisei',
+        'suisei.seed'],
+    packages=[
+        'suisei.seed.utils',
+        'suisei.seed.exceptions'],
     classifiers=[
         'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',

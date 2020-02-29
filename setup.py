@@ -32,6 +32,7 @@ setuptools.setup(
     name='suisei-seed-utils',
     version='0.1.0',
     author='Suisei Entertinment',
+    author_email='info@suiseientertainment.com',
     description='Common utilities used by the SEED platform.',
     long_description=long_description,
     long_description_content_type='text/markdown',

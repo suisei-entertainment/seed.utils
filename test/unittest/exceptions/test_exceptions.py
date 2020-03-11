@@ -50,21 +50,21 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.FrameworkError('test')
-        except suisei.seed.common.exceptions.FrameworkError as error:
+            raise suisei.seed.exceptions.FrameworkError('test')
+        except suisei.seed.exceptions.FrameworkError as error:
             self.assertEqual(error.errorcode,
-                             suisei.seed.common.exceptions.ErrorCodes.NOT_SET)
+                             suisei.seed.exceptions.ErrorCodes.NOT_SET)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.FrameworkError(
+            raise suisei.seed.exceptions.FrameworkError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.FrameworkError as error:
+        except suisei.seed.exceptions.FrameworkError as error:
             self.assertEqual(error.errorcode,
-                             suisei.seed.common.exceptions.ErrorCodes.NOT_SET)
+                             suisei.seed.exceptions.ErrorCodes.NOT_SET)
             self.assertEqual(error.errormessage, 'test')
 
     def test_access_violation_error(self):
@@ -75,23 +75,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.AccessViolationError('test')
-        except suisei.seed.common.exceptions.AccessViolationError as error:
+            raise suisei.seed.exceptions.AccessViolationError('test')
+        except suisei.seed.exceptions.AccessViolationError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.PERMISSION_ERROR)
+                suisei.seed.exceptions.ErrorCodes.PERMISSION_ERROR)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.AccessViolationError(
+            raise suisei.seed.exceptions.AccessViolationError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.AccessViolationError as error:
+        except suisei.seed.exceptions.AccessViolationError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.PERMISSION_ERROR)
+                suisei.seed.exceptions.ErrorCodes.PERMISSION_ERROR)
             self.assertEqual(error.errormessage, 'test')
 
     def test_already_registered_error(self):
@@ -102,23 +102,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.AlreadyRegisteredError('test')
-        except suisei.seed.common.exceptions.AlreadyRegisteredError as error:
+            raise suisei.seed.exceptions.AlreadyRegisteredError('test')
+        except suisei.seed.exceptions.AlreadyRegisteredError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.ALREADY_REGISTERED)
+                suisei.seed.exceptions.ErrorCodes.ALREADY_REGISTERED)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.AlreadyRegisteredError(
+            raise suisei.seed.exceptions.AlreadyRegisteredError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.AlreadyRegisteredError as error:
+        except suisei.seed.exceptions.AlreadyRegisteredError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.ALREADY_REGISTERED)
+                suisei.seed.exceptions.ErrorCodes.ALREADY_REGISTERED)
             self.assertEqual(error.errormessage, 'test')
 
     def test_already_exists_error(self):
@@ -129,23 +129,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.AlreadyExistsError('test')
-        except suisei.seed.common.exceptions.AlreadyExistsError as error:
+            raise suisei.seed.exceptions.AlreadyExistsError('test')
+        except suisei.seed.exceptions.AlreadyExistsError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.ALREADY_EXISTS)
+                suisei.seed.exceptions.ErrorCodes.ALREADY_EXISTS)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.AlreadyExistsError(
+            raise suisei.seed.exceptions.AlreadyExistsError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.AlreadyExistsError as error:
+        except suisei.seed.exceptions.AlreadyExistsError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.ALREADY_EXISTS)
+                suisei.seed.exceptions.ErrorCodes.ALREADY_EXISTS)
             self.assertEqual(error.errormessage, 'test')
 
     def test_input_error(self):
@@ -156,23 +156,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.InvalidInputError('test')
-        except suisei.seed.common.exceptions.InvalidInputError as error:
+            raise suisei.seed.exceptions.InvalidInputError('test')
+        except suisei.seed.exceptions.InvalidInputError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.INPUT_ERROR)
+                suisei.seed.exceptions.ErrorCodes.INPUT_ERROR)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.InvalidInputError(
+            raise suisei.seed.exceptions.InvalidInputError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.InvalidInputError as error:
+        except suisei.seed.exceptions.InvalidInputError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.INPUT_ERROR)
+                suisei.seed.exceptions.ErrorCodes.INPUT_ERROR)
             self.assertEqual(error.errormessage, 'test')
 
     def test_not_registered_error(self):
@@ -183,23 +183,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.NotRegisteredError('test')
-        except suisei.seed.common.exceptions.NotRegisteredError as error:
+            raise suisei.seed.exceptions.NotRegisteredError('test')
+        except suisei.seed.exceptions.NotRegisteredError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.NOT_REGISTERED)
+                suisei.seed.exceptions.ErrorCodes.NOT_REGISTERED)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.NotRegisteredError(
+            raise suisei.seed.exceptions.NotRegisteredError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.NotRegisteredError as error:
+        except suisei.seed.exceptions.NotRegisteredError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.NOT_REGISTERED)
+                suisei.seed.exceptions.ErrorCodes.NOT_REGISTERED)
             self.assertEqual(error.errormessage, 'test')
 
     def test_permission_error(self):
@@ -210,23 +210,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.AccessViolationError('test')
-        except suisei.seed.common.exceptions.AccessViolationError as error:
+            raise suisei.seed.exceptions.AccessViolationError('test')
+        except suisei.seed.exceptions.AccessViolationError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.PERMISSION_ERROR)
+                suisei.seed.exceptions.ErrorCodes.PERMISSION_ERROR)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.AccessViolationError(
+            raise suisei.seed.exceptions.AccessViolationError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.AccessViolationError as error:
+        except suisei.seed.exceptions.AccessViolationError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.PERMISSION_ERROR)
+                suisei.seed.exceptions.ErrorCodes.PERMISSION_ERROR)
             self.assertEqual(error.errormessage, 'test')
 
     def test_installation_failed_error(self):
@@ -237,23 +237,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.InstallationFailedError('test')
-        except suisei.seed.common.exceptions.InstallationFailedError as error:
+            raise suisei.seed.exceptions.InstallationFailedError('test')
+        except suisei.seed.exceptions.InstallationFailedError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.INSTALL_FAILED)
+                suisei.seed.exceptions.ErrorCodes.INSTALL_FAILED)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.InstallationFailedError(
+            raise suisei.seed.exceptions.InstallationFailedError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.InstallationFailedError as error:
+        except suisei.seed.exceptions.InstallationFailedError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.INSTALL_FAILED)
+                suisei.seed.exceptions.ErrorCodes.INSTALL_FAILED)
             self.assertEqual(error.errormessage, 'test')
 
     def test_missing_requirement_error(self):
@@ -264,23 +264,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.MissingRequirementError('test')
-        except suisei.seed.common.exceptions.MissingRequirementError as error:
+            raise suisei.seed.exceptions.MissingRequirementError('test')
+        except suisei.seed.exceptions.MissingRequirementError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.MISSING_REQUIREMENT)
+                suisei.seed.exceptions.ErrorCodes.MISSING_REQUIREMENT)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.MissingRequirementError(
+            raise suisei.seed.exceptions.MissingRequirementError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.MissingRequirementError as error:
+        except suisei.seed.exceptions.MissingRequirementError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.MISSING_REQUIREMENT)
+                suisei.seed.exceptions.ErrorCodes.MISSING_REQUIREMENT)
             self.assertEqual(error.errormessage, 'test')
 
     def test_uncaught_exception_error(self):
@@ -291,23 +291,23 @@ class ExceptionsTest(unittest.TestCase):
 
         # STEP 1 - Test that the exception can be raised.
         try:
-            raise suisei.seed.common.exceptions.UncaughtExceptionError('test')
-        except suisei.seed.common.exceptions.UncaughtExceptionError as error:
+            raise suisei.seed.exceptions.UncaughtExceptionError('test')
+        except suisei.seed.exceptions.UncaughtExceptionError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.UNCAUGHT_EXCEPTION)
+                suisei.seed.exceptions.ErrorCodes.UNCAUGHT_EXCEPTION)
             self.assertEqual(error.errormessage, 'test')
 
         # STEP 2 - Test that the exception can be raised without caller
         # inspection.
         try:
-            raise suisei.seed.common.exceptions.UncaughtExceptionError(
+            raise suisei.seed.exceptions.UncaughtExceptionError(
                 'test',
                 inspect_caller=False)
-        except suisei.seed.common.exceptions.UncaughtExceptionError as error:
+        except suisei.seed.exceptions.UncaughtExceptionError as error:
             self.assertEqual(
                 error.errorcode,
-                suisei.seed.common.exceptions.ErrorCodes.UNCAUGHT_EXCEPTION)
+                suisei.seed.exceptions.ErrorCodes.UNCAUGHT_EXCEPTION)
             self.assertEqual(error.errormessage, 'test')
 
 def load_tests(loader, tests, pattern):

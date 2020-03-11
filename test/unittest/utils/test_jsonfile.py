@@ -30,11 +30,14 @@ import unittest
 from suisei.seed.exceptions import InvalidInputError
 from suisei.seed.utils import JsonFile
 
-TEST_FILE_PATH = os.path.abspath('./.sde/testfiles/json_test.json')
+TEST_FILE_PATH = os.path.abspath(os.path.expanduser(
+    '~/.sde/testfiles/json_test.json'))
 
-INVALID_TEST_FILE_PATH = os.path.abspath('./.sde/testfiles/nonexistent.json')
+INVALID_TEST_FILE_PATH = os.path.abspath(os.path.expanduser(
+    '~/.sde/testfiles/nonexistent.json'))
 
-MALFORMED_FILE_PATH = os.path.abspath('./.sde/testfiles/malformed.json')
+MALFORMED_FILE_PATH = os.path.abspath(os.path.expanduser(
+    '~/.sde/testfiles/malformed.json'))
 
 def get_password():
 
@@ -154,7 +157,7 @@ class JsonFileTest(unittest.TestCase):
             sut.load()
 
         # Create a malformed file and encrypt it
-        from suisei.seed.common.util import AESCipher
+        from suisei.seed.utils import AESCipher
         cipher = AESCipher(get_password())
         content = cipher.encrypt(malformed_json)
         with open(MALFORMED_FILE_PATH, 'wb') as malformed:

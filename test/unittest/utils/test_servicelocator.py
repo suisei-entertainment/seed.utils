@@ -32,7 +32,7 @@ from suisei.seed.utils.servicelocator import ServicePath
 
 TEST_SERVICE = \
 """
-from suisei.seed.common.util import Service, ServiceLocator
+from suisei.seed.utils import Service, ServiceLocator
 
 class AbstractService:
     def service_function(self):
@@ -48,7 +48,7 @@ class ConcreteService(AbstractService):
         return True
 """
 
-SERVICE_DIR = os.path.abspath('./.sde/testfiles/services/')
+SERVICE_DIR = os.path.abspath(os.path.expanduser('~/.sde/testfiles/services/'))
 
 class ServiceLocatorTest(unittest.TestCase):
 
@@ -67,7 +67,8 @@ class ServiceLocatorTest(unittest.TestCase):
     def setUp(self):
 
         # Add .testfiles to the Python path
-        sys.path.append(os.path.abspath('./.sde/testfiles/'))
+        sys.path.append(os.path.abspath(os.path.expanduser(
+            '~/.sde/testfiles/')))
 
         if not os.path.isdir(SERVICE_DIR):
             os.mkdir(SERVICE_DIR)

@@ -27,3 +27,4 @@ from .aes import AESCipher
 from .jsonfile import JsonFile
 from .servicelocator import ServiceLocator, Service
 from .productversion import ProductVersion
+from .cliprocessor import CliProcessor

@@ -20,4 +20,11 @@
 ##
 ## ============================================================================
 
+# Remove previously installed version
+pip uninstall -y suisei-seed-utils
+
+# Build wheel
 python setup.py bdist_wheel
+
+# Install the new version
+pip install ./dist/suisei_seed_utils-0.1.0-py3-none-any.whl

@@ -28,6 +28,7 @@ import argparse
 from typing import Callable
 
 # SEED Imports
+from suisei.seed.exceptions import InvalidInputError
 from .jsonfile import JsonFile
 
 class CliProcessor:
@@ -152,6 +153,8 @@ class CliProcessor:
         Raises:
             InvalidInputError:  Raised when the type of a command map element
                                 cannot be determined.
+            InvalidInputError:  Raised when the element cannot be properly
+                                parsed.
 
         Authors:
             Attila Kovacs
@@ -166,6 +169,11 @@ class CliProcessor:
                     'Failed to determine the type of an element in the '
                     'command map. No type field was found. Element: {}'.format(
                         element))
+            except TypeError:
+                raise InvalidInputError(
+                    'Failed to parse the element descriptor {} '
+                    'properly.'.format(element))
+
             if element_type == 'group':
                 self._register_group(element)
             elif element_type == 'switch':

@@ -28,6 +28,7 @@ import unittest
 
 # SEED Imports
 from suisei.seed.utils import CliProcessor, JsonFile
+from suisei.seed.exceptions import InvalidInputError
 
 # Test data
 TEST_COMMAND_MAP = \
@@ -87,7 +88,7 @@ class CliProcessorTest(unittest.TestCase):
         print('     >>>>> CliProcessor <<<<<')
         print('*******************************************************************************')
 
-    def test_creation_from_command_map(self):
+    def test_creation_from_command_map(self) -> None:
 
         """
         Tests that a CliProcessor object can be created from a command map.
@@ -97,7 +98,7 @@ class CliProcessorTest(unittest.TestCase):
         sut = CliProcessor(command_map=TEST_COMMAND_MAP)
         self.assertIsNotNone(sut.Parser)
 
-    def test_creation_from_config_file(self):
+    def test_creation_from_config_file(self) -> None:
 
         """
         Tests that a CliProcessor object can be created from a configuration
@@ -111,6 +112,66 @@ class CliProcessorTest(unittest.TestCase):
         sut = CliProcessor(config_file=TEST_FILE_PATH)
         self.assertIsNotNone(sut.Parser)
 
+    def test_creation_error_handling(self) -> None:
+
+        """
+        Tests that errors during object creation work correctly.
+        """
+
+        # STEP #1 - Trying to create without command map and config file.
+        with self.assertRaises(InvalidInputError):
+            sut = CliProcessor(command_map=None, config_file=None)
+
+        # STEP #2 - Fail to parse the command map
+        with self.assertRaises(InvalidInputError):
+            sut = CliProcessor(command_map={'malformed': 'value'})
+
+        # STEP #3 - Fail to load the configuration from file with fallback
+        #           command map.
+        with open(TEST_FILE_PATH, 'w') as file:
+            file.write('malformed content')
+
+        sut = CliProcessor(command_map=TEST_COMMAND_MAP,
+                           config_file=TEST_FILE_PATH)
+
+        # STEP #4 - Fail to load the configuration from file without a fallback
+        #           command map.
+        with self.assertRaises(InvalidInputError):
+            sut = CliProcessor(config_file=TEST_FILE_PATH)
+
+    @staticmethod
+    def parser_callback(args: 'argparse.Namespace') -> None:
+
+        """
+        Callback function to test argument processing.
+        """
+
+        return
+
+    def test_argument_parsing(self) -> None:
+
+        """
+        Tests that arguments are parsed correctly.
+        """
+
+        sut = CliProcessor(command_map=TEST_COMMAND_MAP)
+
+        arguments = ['--switch-test', '--config-test2', 'testvalue']
+
+        args = sut.process(
+            args=arguments,
+            cb_argument_processor=CliProcessorTest.parser_callback)
+
+        self.assertTrue(args.switch_test)
+        self.assertEquals(args.config_test2, 'testvalue')
+
+        args = sut.process(
+            args=arguments,
+            cb_argument_processor=CliProcessorTest.parser_callback)
+
+        self.assertTrue(args.switch_test)
+        self.assertEquals(args.config_test2, 'testvalue')
+
 def load_tests(loader, tests, pattern):
 
     """
@@ -121,5 +182,7 @@ def load_tests(loader, tests, pattern):
 
     suite.addTest(CliProcessorTest('test_creation_from_command_map'))
     suite.addTest(CliProcessorTest('test_creation_from_config_file'))
+    suite.addTest(CliProcessorTest('test_creation_error_handling'))
+    suite.addTest(CliProcessorTest('test_argument_parsing'))
 
     return suite

@@ -19,34 +19,8 @@
 ## ============================================================================
 
 """
-Setup script for seed.utils.
+Contains the logging system implementation.
 """
 
-# Platform Imports
-import setuptools
-
-with open('README.md', 'r') as readme_file:
-    long_description = readme_file.read()
-
-setuptools.setup(
-    name='suisei-seed-utils',
-    version='0.1.0',
-    author='Suisei Entertinment',
-    author_email='info@suiseientertainment.com',
-    description='Common utilities used by the SEED platform.',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    url='https://github.com/suisei-ent/seed.utils',
-    namespace_packages=[
-        'suisei',
-        'suisei.seed'],
-    packages=[
-        'suisei.seed.utils',
-        'suisei.seed.utils.log',
-        'suisei.seed.exceptions'],
-    classifiers=[
-        'Programming Language :: Python :: 3.8',
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
-        'Operating System :: POSIX :: Linux',
-        'Topic :: Games/Entertainment'
-    ])
+from .loglevels import LogLevels
+from .logwriter import LogWriter

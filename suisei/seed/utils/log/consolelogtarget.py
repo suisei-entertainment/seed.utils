@@ -19,34 +19,43 @@
 ## ============================================================================
 
 """
-Setup script for seed.utils.
+Contains the implementation of the ConsoleLogTarget class.
 """
 
-# Platform Imports
-import setuptools
+class ConsoleLogTarget(LogTarget):
 
-with open('README.md', 'r') as readme_file:
-    long_description = readme_file.read()
+    """
+    Represents a log target that writes messages to the system console.
 
-setuptools.setup(
-    name='suisei-seed-utils',
-    version='0.1.0',
-    author='Suisei Entertinment',
-    author_email='info@suiseientertainment.com',
-    description='Common utilities used by the SEED platform.',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    url='https://github.com/suisei-ent/seed.utils',
-    namespace_packages=[
-        'suisei',
-        'suisei.seed'],
-    packages=[
-        'suisei.seed.utils',
-        'suisei.seed.utils.log',
-        'suisei.seed.exceptions'],
-    classifiers=[
-        'Programming Language :: Python :: 3.8',
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
-        'Operating System :: POSIX :: Linux',
-        'Topic :: Games/Entertainment'
-    ])
+    Authors:
+        Attila Kovacs
+    """
+
+    def __init__(self, configuration: dict) -> None:
+
+        """
+        Creates a new ConsoleLogTarget entry.
+
+        Args:
+            configuration:      The configuration of the target in serialized
+                                format.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        return
+
+    def write(self, entry: LogEntry) -> None:
+
+        """
+        Writes a log entry to the target.
+
+        Args:
+            entry:      The log entry to write.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        return

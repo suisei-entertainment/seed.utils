@@ -28,8 +28,10 @@ from datetime import datetime
 # SEED Imports
 from suisei.seed.exceptions import InvalidInputError
 from suisei.seed.utils import ServiceLocator
+
 from .loglevels import LogLevels
 from .logentry import LogEntry
+from .loggingservice import LoggingService
 
 class LogWriter:
 
@@ -65,6 +67,30 @@ class LogWriter:
 
         return self._log_level_overwritten
 
+    @property
+    def IsLoggingSuspended(self) -> bool:
+
+        """
+        Returns whether or not logging has been suspended in this writer.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        return self._log_writer_suspended
+
+    @property
+    def CachedLogEntries(self) -> list:
+
+        """
+        Provides access to the list of cached log entries.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        return self._cache
+
     def __init__(self, channel_name: str, cache_entries: bool = False) -> None:
 
         """
@@ -90,16 +116,17 @@ class LogWriter:
         # Name of the channel this writer logs to.
         self._channel_name = channel_name
 
-        # The log channel object to log to.
-        self._channel = self._attach()
-
         # Current log level of the writer.
         self._log_level = None
 
         # Whether or not the log level has been overwritten for this writer.
         self._log_level_overwritten = False
 
-        self._attach()
+        # The log channel object to log to.
+        self._channel = self._attach()
+
+        # Whether or not the log writer has been suspended.
+        self._log_writer_suspended = False
 
     def overwrite_log_level(self, new_log_level: LogLevels) -> None:
 
@@ -134,6 +161,28 @@ class LogWriter:
 
         self._log_level_overwritten = False
 
+    def suspend_logging(self) -> None:
+
+        """
+        Suspends all logging from this writer.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        self._log_writer_suspended = True
+
+    def resume_logging(self) -> None:
+
+        """
+        Resumes logging from this writer.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        self._log_writer_suspended = False
+
     def debug(self, message: str) -> None:
 
         """
@@ -146,6 +195,9 @@ class LogWriter:
         Authors:
             Attila Kovacs.
         """
+
+        if self.IsLoggingSuspended:
+            return
 
         if self._log_level == LogLevels.DEBUG:
             entry = self._make_entry(level=LogLevels.DEBUG, message=message)
@@ -164,6 +216,9 @@ class LogWriter:
             Attila Kovacs.
         """
 
+        if self.IsLoggingSuspended:
+            return
+
         if self._log_level <= LogLevels.INFO:
             entry = self._make_entry(level=LogLevels.INFO, message=message)
             self._log(entry=entry)
@@ -180,6 +235,9 @@ class LogWriter:
         Authors:
             Attila Kovacs.
         """
+
+        if self.IsLoggingSuspended:
+            return
 
         if self._log_level <= LogLevels.NOTICE:
             entry = self._make_entry(level=LogLevels.NOTICE, message=message)
@@ -198,6 +256,9 @@ class LogWriter:
             Attila Kovacs.
         """
 
+        if self.IsLoggingSuspended:
+            return
+
         if self._log_level <= LogLevels.WARNING:
             entry = self._make_entry(level=LogLevels.WARNING, message=message)
             self._log(entry=entry)
@@ -214,6 +275,9 @@ class LogWriter:
         Authors:
             Attila Kovacs.
         """
+
+        if self.IsLoggingSuspended:
+            return
 
         if self._log_level <= LogLevels.ERROR:
             entry = self._make_entry(level=LogLevels.ERROR, message=message)
@@ -232,6 +296,9 @@ class LogWriter:
             Attila Kovacs.
         """
 
+        if self.IsLoggingSuspended:
+            return
+
         if self._log_level <= LogLevels.CRITICAL:
             entry = self._make_entry(level=LogLevels.CRITICAL, message=message)
             self._log(entry=entry)
@@ -249,6 +316,9 @@ class LogWriter:
             Attila Kovacs.
         """
 
+        if self.IsLoggingSuspended:
+            return
+
         if self._log_level <= LogLevels.ALERT:
             entry = self._make_entry(level=LogLevels.ALERT, message=message)
             self._log(entry=entry)
@@ -265,6 +335,9 @@ class LogWriter:
         Authors:
             Attila Kovacs.
         """
+
+        if self.IsLoggingSuspended:
+            return
 
         if self._log_level <= LogLevels.EMERGENCY:
             entry = self._make_entry(level=LogLevels.EMERGENCY, message=message)

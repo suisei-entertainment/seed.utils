@@ -19,12 +19,46 @@
 ## ============================================================================
 
 """
-Contains the logging system implementation.
+Contains the unit tests of the LogChannel class.
 """
 
-from .loglevels import LogLevels
-from .logwriter import LogWriter
-from .logentry import LogEntry
-from .logchannel import LogChannel
-from .logtarget import LogTarget
-from .loggingservice import LoggingService
+# Platform Imports
+import os
+import unittest
+
+# SEED Imports
+from suisei.seed.utils.log import LogChannel
+
+class LogChannelTest(unittest.TestCase):
+
+    """
+    Contains all unit tests of the LogChannel class.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+
+        print('')
+        print('*******************************************************************************')
+        print('     >>>>> LogChannel <<<<<')
+        print('*******************************************************************************')
+
+    def test_creation(self):
+
+        """
+        Tests that a log channel can be created.
+        """
+
+        return
+
+def load_tests(loader, tests, pattern):
+
+    """
+    Registers the test suite with the test runner.
+    """
+
+    suite = unittest.TestSuite()
+
+    suite.addTest(LogChannelTest('test_creation'))
+
+    return suite

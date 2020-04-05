@@ -19,12 +19,28 @@
 ## ============================================================================
 
 """
-Contains the logging system implementation.
+Contains the implementation of the LoggingService class.
 """
 
-from .loglevels import LogLevels
-from .logwriter import LogWriter
-from .logentry import LogEntry
-from .logchannel import LogChannel
-from .logtarget import LogTarget
-from .loggingservice import LoggingService
+class LoggingService:
+
+    """
+    Common interface for logging service implementations.
+
+    Authors:
+        Attila Kovacs
+    """
+
+    def get_channel(self, name: str) -> 'LogChannel':
+
+        """
+        Returns a given log channel.
+
+        Args:
+            name:       Name of the channel to retrieve.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        return None

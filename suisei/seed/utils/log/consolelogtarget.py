@@ -22,6 +22,12 @@
 Contains the implementation of the ConsoleLogTarget class.
 """
 
+# Platform Imports
+import logging
+
+# Dependency Imports
+import coloredlogs
+
 class ConsoleLogTarget(LogTarget):
 
     """
@@ -31,12 +37,14 @@ class ConsoleLogTarget(LogTarget):
         Attila Kovacs
     """
 
-    def __init__(self, configuration: dict) -> None:
+    def __init__(self, logger: Logger, configuration: dict) -> None:
 
         """
         Creates a new ConsoleLogTarget entry.
 
         Args:
+            logger:             The logger object that will be used for
+                                logging.
             configuration:      The configuration of the target in serialized
                                 format.
 
@@ -44,18 +52,83 @@ class ConsoleLogTarget(LogTarget):
             Attila Kovacs
         """
 
-        return
+        super().__init__(logger=logger)
 
-    def write(self, entry: LogEntry) -> None:
+        # Whether or not console log should be colored.
+        self._colored_logs = False
+
+        # Optional format string to use for logging to console.
+        self._format_string = None
+
+        # Optional date format string to use for logging to console.
+        self._date_format_string = None
+
+        # The actual log handler object.
+        self._handler = None
+
+        # Parse the configuration
+        self._load_configuration(configuration=configuration)
+
+        # Apply the configuration to the logger.
+        self._apply_configuration()
+
+    def _load_configuration(self, configuration: dict) -> None:
 
         """
-        Writes a log entry to the target.
+        Loads the configuration of the target from its serialized format.
 
         Args:
-            entry:      The log entry to write.
+            configuration:      The configuration of the log target in
+                                serialized format.
 
         Authors:
             Attila Kovacs
         """
 
-        return
+        # Load log coloring
+        colored_logs = None
+        try:
+            colored_logs = configuration['coloredlogs']
+        except KeyError:
+            colored_logs = 'False'
+
+        if colored_logs.lower() == 'true':
+            self._colored_logs = True
+        else:
+            self._colored_logs = False
+
+        # Load console log format
+        try:
+            self._format_string = configuration['format']
+        except KeyError:
+            self._format_string = '[%(asctime)s][%(levelname)s]: %(message)s'
+
+        # Load date format
+        try:
+            self._date_format_string = configuration['dateformat']
+        except KeyError:
+            self._date_format_string = '%Y-%m-%d %H:%M:%S'
+
+    def _apply_configuration(self) -> None:
+
+        """
+        Applies the configuration to the underlying logger object.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        # Create the handler
+        self._handler = logging.StreamHandler()
+
+        # Add the handler to the logger
+        self.Logger.addHandler(self._handler)
+
+        # Set formatter
+        self._handler.setFormatter(logging.Formatter(
+                fmt=self._format_string,
+                datefmt=self._date_format_string)
+
+        # Enable colored logs
+        if self._colored_logs:
+            coloredlogs.install(level=logging.DEBUG, logger=self.Logger)

@@ -25,19 +25,6 @@ Contains the implementation of the LogLevels class.
 # Platform Imports
 from enum import IntEnum
 
-# Conversion map to use when reading the log level from a string.
-LOG_LEVEL_CONVERSION_MAP = \
-{
-    'DEBUG': LogLevels.DEBUG,
-    'INFO': LogLevels.INFO,
-    'NOTICE': LogLevels.NOTICE,
-    'WARNING': LogLevels.WARNING,
-    'ERROR': LogLevels.ERROR,
-    'CRITICAL': LogLevels.CRITICAL,
-    'ALERT': LogLevels.ALERT,
-    'EMERGENCY': LogLevels.EMERGENCY
-}
-
 class LogLevels(IntEnum):
 
     """
@@ -68,3 +55,16 @@ class LogLevels(IntEnum):
     CRITICAL = 5
     ALERT = 6
     EMERGENCY = 7
+
+# Conversion map to use when reading the log level from a string.
+LOG_LEVEL_CONVERSION_MAP = \
+{
+    'DEBUG': LogLevels.DEBUG,
+    'INFO': LogLevels.INFO,
+    'NOTICE': LogLevels.NOTICE,
+    'WARNING': LogLevels.WARNING,
+    'ERROR': LogLevels.ERROR,
+    'CRITICAL': LogLevels.CRITICAL,
+    'ALERT': LogLevels.ALERT,
+    'EMERGENCY': LogLevels.EMERGENCY
+}

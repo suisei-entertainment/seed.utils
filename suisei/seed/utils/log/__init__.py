@@ -24,3 +24,6 @@ Contains the logging system implementation.
 
 from .loglevels import LogLevels
 from .logwriter import LogWriter
+from .logentry import LogEntry
+from .logchannel import LogChannel
+from .logtarget import LogTarget

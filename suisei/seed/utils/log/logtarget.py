@@ -28,10 +28,39 @@ class LogTarget:
     Common base class for log target implementations.
     """
 
-    def write(self, entry: LogEntry) -> None:
+    @property
+    def Logger(self) -> 'Logger':
 
         """
-        Writes a log entry to the target.
+        Provides access to the underlying logger object.
+        """
+
+        return self._logger
+
+    def __init__(self, logger: 'Logger') -> None:
+
+        """
+        Creates a new ConsoleLogTarget entry.
+
+        Args:
+            logger:             The logger object that will be used for
+                                logging.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        # The logger object that will be used to write the logs to the console.
+        self._logger = logger
+
+    def write(self, entry: 'LogEntry') -> None:
+
+        """
+        Writes a log message to the target.
+
+        This function does not do anything by default. It is here to provide a
+        way for custom log target implementations to write their own log
+        messages outside the Python logging infrastructure.
 
         Args:
             entry:      The log entry to write.
@@ -40,4 +69,4 @@ class LogTarget:
             Attila Kovacs
         """
 
-        return NotImplementedError
+        return

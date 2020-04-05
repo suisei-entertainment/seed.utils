@@ -22,8 +22,12 @@
 Contains implementation of the LogChannel class.
 """
 
+# Platform Imports
+import logging
+
 # SEED Imports
 from .loglevels import LogLevels, LOG_LEVEL_CONVERSION_MAP
+from .logentry import LogEntry
 
 class LogChannel:
 
@@ -79,6 +83,16 @@ class LogChannel:
         # List of log targets this channel is writing to.
         self._targets = []
 
+        self._load_configuration(configuration)
+
+        # Get a reference to the wrapped Python logger object.
+        self._logger = logging.getLogger(self._name)
+
+        # Set the log level to DEBUG, so all log messages would be written to
+        # the logger by default. Actual log level will be controlled by the
+        # writers.
+        self._logger.setLevel(logging.DEBUG)
+
     def write(self, entry: LogEntry) -> None:
 
         """
@@ -90,6 +104,20 @@ class LogChannel:
         Authors:
             Attila Kovacs
         """
+
+        # Send the message to the central logger
+        if entry.LogLevel == LogLevels.DEBUG:
+            self._logger.debug(entry.Message)
+        elif entry.LogLevel in (LogLevels.INFO, LogLevels.NOTICE):
+            self._logger.info(entry.Message)
+        elif entry.LogLevel == LogLevels.NOTICE:
+            self._logger.info(entry.Message)
+        elif entry.LogLevel == LogLevels.WARNING:
+            self._logger.warning(entry.Message)
+        elif entry.LogLevel == LogLevels.ERROR:
+            self._logger.error(entry.Message)
+        elif entry.LogLevel in (LogLevels.CRITICAL, LogLevels.ALERT, LogLevels.EMERGENCY):
+            self._logger.fatal(entry.Message)
 
         # Send the message to all targets
         for target in self._targets:
@@ -128,6 +156,9 @@ class LogChannel:
             # configuraiton.
             self._default_log_level = LogLevels.INFO
 
+        # Remove all existing log handlers
+        self._logger.handlers = []
+
         # Load targets
         try:
             channels = configuration['targets']
@@ -151,15 +182,20 @@ class LogChannel:
             # Load the target based on type
             try:
                 if target_type == 'console':
-                    log_target = ConsoleLogTarget(configuration=target)
+                    log_target = ConsoleLogTarget(logger=self._logger,
+                                                  configuration=target)
                 elif target_type == 'file':
-                    log_target = FileLogTarget(configuration=target)
+                    log_target = FileLogTarget(logger=self._logger,
+                                               configuration=target)
                 elif target_type == 'syslog':
-                    log_target = SyslogTarget(configuration=target)
+                    log_target = SyslogTarget(logger=self._logger,
+                                              configuration=target)
                 elif target_type == 'database':
-                    log_target = DatabaseLogTarget(configuration=target)
+                    log_target = DatabaseLogTarget(logger=self._logger,
+                                                   configuration=target)
                 elif target_type == 'structured':
-                    log_target = StructuredLogTarget(configuration=target)
+                    log_target = StructuredLogTarget(logger=self._logger,
+                                                     configuration=target)
             except InvalidInputError:
                 # Don't fail if the configuration of a target is wrong.
                 continue

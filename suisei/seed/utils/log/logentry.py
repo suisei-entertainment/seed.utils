@@ -32,7 +32,7 @@ class LogEntry:
     """
 
     @property
-    def LogLevel(self) -> LogLevels:
+    def LogLevel(self) -> 'LogLevels':
 
         """
         The log level of the entry.
@@ -44,7 +44,7 @@ class LogEntry:
         return self._level
 
     @property
-    def Timestamp(self) -> datetime:
+    def Timestamp(self) -> 'datetime':
 
         """
         The time when the entry has been created.
@@ -80,8 +80,8 @@ class LogEntry:
         return self._classname
 
     def __init__(self,
-                 level: LogLevels,
-                 timestamp: datetime,
+                 level: 'LogLevels',
+                 timestamp: 'datetime',
                  message: str,
                  classname: str) -> None:
 

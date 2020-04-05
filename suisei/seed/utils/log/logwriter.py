@@ -29,6 +29,7 @@ from datetime import datetime
 from suisei.seed.exceptions import InvalidInputError
 from suisei.seed.utils import ServiceLocator
 from .loglevels import LogLevels
+from .logentry import LogEntry
 
 class LogWriter:
 
@@ -335,7 +336,7 @@ class LogWriter:
         return LogEntry(level=level,
                         timestamp=datetime.utcnow(),
                         message=message,
-                        classname=self.__class__.__name__):
+                        classname=self.__class__.__name__)
 
     def _cache_entry(self, entry: LogEntry) -> None:
 

@@ -132,10 +132,56 @@ class ServiceLocator:
 
         providers.append(instance)
 
-        logger = logging.getLogger('suisei.seed.services')
-        logger.debug(
-            'New service provider (%s) was registered for service %s.',
-            instance, service)
+    def unregister_provider(self, service: object, instance: object) -> None:
+
+        """
+        Unregisters a provider from a given service.
+
+        Args:
+            service:        The service to unregister the provider from.
+            instance:       The service provider instance to unregister.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        providers = self._services.get(service)
+
+        if providers is not None:
+            providers.remove(instance)
+
+        if len(providers) == 0:
+            service_object = self._services.get(service)
+            if service_object:
+                del service_object
+
+    def unregister_all_providers(self, service: object) -> None:
+
+        """
+        Unregisters all providers of a given service.
+
+        Args:
+            service:        The service to unregister the providers from.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        service_object = self._services.get(service)
+        if service_object:
+            del service_object
+
+    def reset(self) -> None:
+
+        """
+        Resets the service locator.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        self._services = {}
+        self._service_paths = []
 
     def get_all_providers(self, service: object) -> list:
 
@@ -227,10 +273,6 @@ class ServiceLocator:
 
         self._service_paths.append(ServicePath(path, package))
 
-        logger = logging.getLogger('suisei.seed.services')
-        logger.debug('Service path %s was registered with package name %s.',
-                     path, package)
-
     def discover_services(self) -> None:
 
         """
@@ -241,19 +283,13 @@ class ServiceLocator:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.services')
-        logger.debug('Running service discovery...')
-
         for service_path in self._service_paths:
 
             # Check if the directory exists
             if not os.path.isdir(os.path.abspath(service_path.Path)):
-                logger.warning('Service path %s does not exist, skipping.',
-                               service_path.Path)
                 continue
 
             # Collect files from the target directory
-            logger.debug('Collecting services from %s', service_path.Path)
             current_dir = os.getcwd()
             os.chdir(os.path.abspath(service_path.Path))
 
@@ -268,10 +304,6 @@ class ServiceLocator:
                 filename, dummy = os.path.splitext(filename)
 
                 import_name = '{}.{}'.format(service_path.Package, filename)
-
-                logger.debug('Service package %s discovered.', import_name)
-
-                logger.debug('Registering service from %s', import_name)
 
                 # Register the service
                 importlib.import_module(import_name)

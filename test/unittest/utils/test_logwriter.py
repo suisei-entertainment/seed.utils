@@ -27,7 +27,19 @@ import os
 import unittest
 
 # SEED Imports
-from suisei.seed.utils.log import LogWriter, LogLevels
+from suisei.seed.utils import ServiceLocator
+from suisei.seed.utils.log import LogWriter, LogLevels, LoggingService
+
+class TestLoggingService:
+    def __init__(self):
+        ServiceLocator.instance().register_provider(LoggingService, self)
+    def get_channel(self, name):
+        return self
+    @property
+    def DefaultLogLevel(self):
+        return LogLevels.INFO
+    def write(self, entry):
+        return
 
 class LogWriterTest(unittest.TestCase):
 
@@ -60,6 +72,10 @@ class LogWriterTest(unittest.TestCase):
         self.assertIsNone(sut.LogLevel)
 
         # STEP #3 - Log writer can be created if there is a logging service
+        service = TestLoggingService()
+        sut = LogWriter(channel_name='test')
+        self.assertEquals(sut.LogLevel, LogLevels.INFO)
+        ServiceLocator.instance().reset()
 
     def test_log_level_overwrite(self):
 
@@ -78,6 +94,15 @@ class LogWriterTest(unittest.TestCase):
         sut.reset_log_level()
         self.assertEquals(sut.LogLevel, LogLevels.INFO)
         self.assertFalse(sut.IsLogLevelOverwritten)
+
+        # STEP #3 - Log level can be reset when there is a channel attached
+        service = TestLoggingService()
+        sut = LogWriter(channel_name='test')
+        sut.overwrite_log_level(LogLevels.EMERGENCY)
+        self.assertEquals(sut.LogLevel, LogLevels.EMERGENCY)
+        sut.reset_log_level()
+        self.assertEquals(sut.LogLevel, LogLevels.INFO)
+        ServiceLocator.instance().reset()
 
     def test_debug_message(self):
 

@@ -339,9 +339,8 @@ class LogWriter:
         if self.IsLoggingSuspended:
             return
 
-        if self._log_level <= LogLevels.EMERGENCY:
-            entry = self._make_entry(level=LogLevels.EMERGENCY, message=message)
-            self._log(entry=entry)
+        entry = self._make_entry(level=LogLevels.EMERGENCY, message=message)
+        self._log(entry=entry)
 
     def _log(self, entry: LogEntry) -> None:
 

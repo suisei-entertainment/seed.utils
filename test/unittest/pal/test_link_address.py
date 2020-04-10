@@ -19,21 +19,19 @@
 ## ============================================================================
 
 """
-Contains the unit tests of the LogEntry class.
+Contains the unit tests of LinkAddress class.
 """
 
 # Platform Imports
-import os
 import unittest
-import datetime
 
-# Framework Imports
-from suisei.seed.utils.log import LogEntry, LogLevels
+# SEED Imports
+from suisei.seed.pal.host.linkaddress import LinkAddress
 
-class LogEntryTest(unittest.TestCase):
+class LinkAddressTest(unittest.TestCase):
 
     """
-    Contains all unit tests of the LogEntry class.
+    Contains the unit tests of LinkAddress class.
     """
 
     @classmethod
@@ -41,26 +39,17 @@ class LogEntryTest(unittest.TestCase):
 
         print('')
         print('*******************************************************************************')
-        print('     >>>>> LogEntry <<<<<')
+        print('     >>>>> LinkAddress <<<<<')
         print('*******************************************************************************')
 
     def test_creation(self):
 
         """
-        Tests that a log entry can be created.
+        Tests that a LinkAddress instance can be created.
         """
 
-        timestamp = datetime.datetime.now()
-
-        sut = LogEntry(level=LogLevels.DEBUG,
-                       timestamp=timestamp,
-                       message='test',
-                       classname=self.__class__.__name__)
-
-        self.assertEquals(sut.LogLevel, LogLevels.DEBUG)
-        self.assertEquals(sut.Timestamp, timestamp)
-        self.assertEquals(sut.Message, 'test')
-        self.assertEquals(sut.Classname, self.__class__.__name__)
+        sut = LinkAddress(address='00:0A:95:9D:68:16')
+        self.assertEqual(sut.Address, '00:0A:95:9D:68:16')
 
 def load_tests(loader, tests, pattern):
 
@@ -70,6 +59,6 @@ def load_tests(loader, tests, pattern):
 
     suite = unittest.TestSuite()
 
-    suite.addTest(LogEntryTest('test_creation'))
+    suite.addTest(LinkAddressTest('test_creation'))
 
     return suite

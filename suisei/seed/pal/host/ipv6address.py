@@ -19,46 +19,17 @@
 ## ============================================================================
 
 """
-Contains the unit tests of the LogChannel class.
+Contains the implementation of the IPv6Address class.
 """
 
-# Platform Imports
-import os
-import unittest
+# Murasame Imports
+from .ipaddress import IPAddress
 
-# SEED Imports
-from suisei.seed.utils.log import LogChannel
-
-class LogChannelTest(unittest.TestCase):
+class IPv6Address(IPAddress):
 
     """
-    Contains all unit tests of the LogChannel class.
+    Representation of an IPv6 address of a physical network interface.
+
+    Authors:
+        Attila Kovacs
     """
-
-    @classmethod
-    def setUpClass(cls):
-
-        print('')
-        print('*******************************************************************************')
-        print('     >>>>> LogChannel <<<<<')
-        print('*******************************************************************************')
-
-    def test_creation(self):
-
-        """
-        Tests that a log channel can be created.
-        """
-
-        return
-
-def load_tests(loader, tests, pattern):
-
-    """
-    Registers the test suite with the test runner.
-    """
-
-    suite = unittest.TestSuite()
-
-    suite.addTest(LogChannelTest('test_creation'))
-
-    return suite

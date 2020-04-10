@@ -19,36 +19,46 @@
 ## ============================================================================
 
 """
-Setup script for seed.utils.
+Contains the unit tests of HostMemory class.
 """
 
 # Platform Imports
-import setuptools
+import unittest
 
-with open('README.md', 'r') as readme_file:
-    long_description = readme_file.read()
+# SEED Imports
+from suisei.seed.pal.host.hostmemory import HostMemory
 
-setuptools.setup(
-    name='suisei-seed-utils',
-    version='0.1.0',
-    author='Suisei Entertinment',
-    author_email='info@suiseientertainment.com',
-    description='Common utilities used by the SEED platform.',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    url='https://github.com/suisei-ent/seed.utils',
-    namespace_packages=[
-        'suisei',
-        'suisei.seed'],
-    packages=[
-        'suisei.seed.utils',
-        'suisei.seed.log',
-        'suisei.seed.exceptions',
-        'suisei.seed.pal',
-        'suisei.seed.pal.host'],
-    classifiers=[
-        'Programming Language :: Python :: 3.8',
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
-        'Operating System :: POSIX :: Linux',
-        'Topic :: Games/Entertainment'
-    ])
+class HostMemoryTest(unittest.TestCase):
+
+    """
+    Contains the unit tests of HostMemory class.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+
+        print('')
+        print('*******************************************************************************')
+        print('     >>>>> HostMemory <<<<<')
+        print('*******************************************************************************')
+
+    def test_creation(self):
+
+        """
+        Tests that a HostMemory instance can be created successfully.
+        """
+
+        sut = HostMemory()
+        self.assertNotEqual(sut.TotalSystemMemory, None)
+
+def load_tests(loader, tests, pattern):
+
+    """
+    Registers the test suite with the test runner.
+    """
+
+    suite = unittest.TestSuite()
+
+    suite.addTest(HostMemoryTest('test_creation'))
+
+    return suite

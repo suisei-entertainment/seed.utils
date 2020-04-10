@@ -28,7 +28,7 @@ import unittest
 
 # SEED Imports
 from suisei.seed.utils import ServiceLocator
-from suisei.seed.utils.log import LogWriter, LogLevels, LoggingService
+from suisei.seed.log import LogWriter, LogLevels, LoggingService
 
 class TestLoggingService:
     def __init__(self):

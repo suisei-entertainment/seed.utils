@@ -49,7 +49,8 @@ class HostNetworkingTest(unittest.TestCase):
         """
 
         sut = HostNetworking()
-        self.assertNotEqual(sut.PhysicalInterfaces, False)
+        self.assertNotEqual(sut.PhysicalInterfaces, None)
+        self.assertNotEqual(sut.PublicIP, None)
 
 def load_tests(loader, tests, pattern):
 

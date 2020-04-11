@@ -24,6 +24,7 @@ Contains the implementation of the HostNetworking class.
 
 # Platform Imports
 import logging
+import requests
 
 # SEED Imports
 from .physicalinterface import PhysicalInterface
@@ -51,6 +52,18 @@ class HostNetworking:
 
         return self._physical_interfaces
 
+    @property
+    def PublicIP(self) -> str:
+
+        """
+        Provides access to the public IP address of the machine.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        return self._public_ip
+
     def __init__(self) -> None:
 
         """
@@ -60,12 +73,14 @@ class HostNetworking:
             Attila Kovacs
         """
 
+        # List of phyisical network interfaces in the host system.
         self._physical_interfaces = {}
-        """
-        List of phyisical network interfaces in the host system.
-        """
+
+        # The public IP address of the host system.
+        self._public_ip = None
 
         self._detect_networking(self._get_interfaces())
+        self._detect_public_ip()
 
     def has_network_interface(self, interface_name: str) -> bool:
 
@@ -341,3 +356,22 @@ class HostNetworking:
 
         logger.debug('New physical network interface (%s) has been created.',
                      interface_name)
+
+    def _detect_public_ip(self) -> None:
+
+        """
+        Detects the public IP of the host by calling the ipify API.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        logger = logging.getLogger('suisei.seed.pal')
+
+        try:
+            ip = requests.get('https://api.ipify.org', timeout=1).text
+        except requests.exceptions.Timeout:
+            logger.warning('Failed to detect public IP. Request timeout.')
+
+        self._public_ip = ip
+        logger.debug('Public IP is detected as %s', self._public_ip)

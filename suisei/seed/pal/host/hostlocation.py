@@ -143,8 +143,15 @@ class HostLocation:
         if not os.path.isfile(full_path):
             raise InvalidInputError('GeoIP database was not found.')
 
+        response = None
+
         reader = geoip2.database.Reader(full_path)
-        response = reader.city(public_ip)
+        try:
+            response = reader.city(public_ip)
+        except geoip2.errors.AddressNotFoundError:
+            # IP address not found
+            pass
+
         if response:
             self._continent = response.continent.name
             self._country = response.country.name

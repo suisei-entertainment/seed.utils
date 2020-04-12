@@ -23,11 +23,27 @@ Contains the unit tests of HostLocation class.
 """
 
 # Platform Imports
+import os
 import unittest
+import tarfile
+import shutil
+
+# Dependency Imports
+import wget
 
 # SEED Imports
 from suisei.seed.pal.host.hostlocation import HostLocation
 from suisei.seed.exceptions import InvalidInputError
+
+# Constants
+DATABASE_PACKAGE_PATH = os.path.abspath(
+    os.path.expanduser('/tmp/GeoLite2-City.tar.gz'))
+
+DATABASE_PATH = os.path.abspath(
+    os.path.expanduser('~/.sde/testfiles/GeoLite2-City.mmdb'))
+
+DATABASE_DIR = os.path.abspath(
+    os.path.expanduser('~/.sde/testfiles'))
 
 class HostLocationTest(unittest.TestCase):
 
@@ -38,10 +54,31 @@ class HostLocationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
 
+        def find_mmdb(members):
+            for member in members:
+                if os.path.splitext(member.name)[1] == '.mmdb':
+                    member.name = os.path.basename(member.name)
+                    yield member
+
         print('')
         print('*******************************************************************************')
         print('     >>>>> HostLocation <<<<<')
         print('*******************************************************************************')
+
+        # Download a GeoIP database
+        download_url = \
+            'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=pELDCVUneMIsHhyU&suffix=tar.gz'
+
+        print('')
+        print('Downloading GeoIP database...')
+        wget.download(url=download_url, out=DATABASE_PACKAGE_PATH)
+        print('')
+        print('Extracting GeoIP database...')
+        tar = tarfile.open(DATABASE_PACKAGE_PATH)
+        tar.extractall(path='/tmp', members=find_mmdb(tar))
+        tar.close()
+        shutil.move(src='/tmp/GeoLite2-City.mmdb', dst=DATABASE_PATH)
+        os.remove(DATABASE_PACKAGE_PATH)
 
     def test_creation(self):
 
@@ -51,22 +88,41 @@ class HostLocationTest(unittest.TestCase):
 
         # STEP #1 - Create with a valid IP, but without a database
         with self.assertRaises(InvalidInputError):
-            sut = HostLocation(public_ip='5.187.173.113', database_path='/data')
+            sut = HostLocation(public_ip='5.187.173.113',
+                               database_path='/data')
             self.assertEqual(sut.Continent, 'UNKNOWN')
             self.assertEqual(sut.Country, 'UNKNOWN')
+            self.assertEqual(sut.City, 'UNKNOWN')
+            self.assertEqual(sut.PostalCode, 'UNKNOWN')
             self.assertEqual(sut.Location, (0,0))
-            self.assertEqual(sut.Timezone, 'UNKNOWN')
 
         # STEP #2 - Create with an invalid IP and without a database
         with self.assertRaises(InvalidInputError):
-            sut = HostLocation(public_ip='192.168.0.1', database_path='/data')
+            sut = HostLocation(public_ip='192.168.0.1',
+                               database_path='/data')
             self.assertEqual(sut.Continent, 'UNKNOWN')
             self.assertEqual(sut.Country, 'UNKNOWN')
+            self.assertEqual(sut.City, 'UNKNOWN')
+            self.assertEqual(sut.PostalCode, 'UNKNOWN')
             self.assertEqual(sut.Location, (0,0))
-            self.assertEqual(sut.Timezone, 'UNKNOWN')
 
         # STEP #3 - Create with a valid IP and a database
+        sut = HostLocation(public_ip='5.187.173.113',
+                           database_path=DATABASE_DIR)
+        self.assertNotEqual(sut.Continent, 'UNKNOWN')
+        self.assertNotEqual(sut.Country, 'UNKNOWN')
+        self.assertNotEqual(sut.City, 'UNKNOWN')
+        self.assertNotEqual(sut.PostalCode, 'UNKNOWN')
+        self.assertNotEqual(sut.Location, (0,0))
+
         # STEP #4 - Create with an invalid IP and a database
+        sut = HostLocation(public_ip='192.168.0.1',
+                           database_path=DATABASE_DIR)
+        self.assertEqual(sut.Continent, 'UNKNOWN')
+        self.assertEqual(sut.Country, 'UNKNOWN')
+        self.assertEqual(sut.City, 'UNKNOWN')
+        self.assertEqual(sut.PostalCode, 'UNKNOWN')
+        self.assertEqual(sut.Location, (0,0))
 
 def load_tests(loader, tests, pattern):
 

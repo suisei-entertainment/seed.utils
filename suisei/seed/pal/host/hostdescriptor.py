@@ -73,15 +73,18 @@ class HostDescriptor:
 
         return self._python
 
-    def __init__(self) -> None:
+    def __init__(self, geoip_database_path: str = '/data/geoip') -> None:
 
         """
         Creates a new HostDescriptor instance.
+
+        Args:
+
 
         Authors:
             Attila Kovacs
         """
 
-        self._hardware = HostHardware()
+        self._hardware = HostHardware(geoip_database_path=geoip_database_path)
         self._os = HostOS()
         self._python = HostPython()

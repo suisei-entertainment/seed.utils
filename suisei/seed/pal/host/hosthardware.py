@@ -73,10 +73,13 @@ class HostHardware:
 
         return self._networking
 
-    def __init__(self) -> None:
+    def __init__(self, geoip_database_path: str = '/data/geoip') -> None:
 
         """
         Creates a new HostHardware instance.
+
+        Args:
+            geoip_database_path:        Path to the local GeoIP database.
 
         Authors:
             Attila Kovacs
@@ -84,4 +87,5 @@ class HostHardware:
 
         self._cpu = HostCPU()
         self._memory = HostMemory()
-        self._networking = HostNetworking()
+        self._networking = HostNetworking(
+            geoip_database_path=geoip_database_path)

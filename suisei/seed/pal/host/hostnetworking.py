@@ -27,7 +27,9 @@ import logging
 import requests
 
 # SEED Imports
+from suisei.seed.exceptions import InvalidInputError
 from .physicalinterface import PhysicalInterface
+from .hostlocation import HostLocation
 
 class HostNetworking:
 
@@ -64,10 +66,26 @@ class HostNetworking:
 
         return self._public_ip
 
-    def __init__(self) -> None:
+    @property
+    def HostLocation(self) -> 'HostLocation':
+
+        """
+        Provides access to the host location descriptor.
+
+        Authors:
+            Attila Kovacs
+        """
+
+        return self._host_location
+
+    def __init__(self,
+                 geoip_database_path: str = '/data/geoip') -> None:
 
         """
         Creates a new HostNetworking instance.
+
+        Args:
+            geoip_database_path:    Path to the GeoIP database.
 
         Authors:
             Attila Kovacs
@@ -78,6 +96,12 @@ class HostNetworking:
 
         # The public IP address of the host system.
         self._public_ip = None
+
+        # The location descriptor of the public IP address.
+        self._host_location = None
+
+        # Path to the GeoIP database to use.
+        self._geoip_database_path = geoip_database_path
 
         self._detect_networking(self._get_interfaces())
         self._detect_public_ip()
@@ -372,6 +396,15 @@ class HostNetworking:
             ip = requests.get('https://api.ipify.org', timeout=1).text
         except requests.exceptions.Timeout:
             logger.warning('Failed to detect public IP. Request timeout.')
+            return
 
         self._public_ip = ip
         logger.debug('Public IP is detected as %s', self._public_ip)
+
+        try:
+            self._host_location = HostLocation(
+                public_ip=self._public_ip,
+                database_path=self._geoip_database_path)
+        except InvalidInputError:
+            logger.debug('Failed to detect host location. GeoIP databasae is '
+                         'not available.')

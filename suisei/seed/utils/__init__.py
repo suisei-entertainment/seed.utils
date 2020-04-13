@@ -28,3 +28,4 @@ from .jsonfile import JsonFile
 from .servicelocator import ServiceLocator, Service
 from .productversion import ProductVersion
 from .cliprocessor import CliProcessor
+from .geoip import GeoIP, GeoIPData

@@ -29,6 +29,7 @@ import shutil
 
 # Dependency Imports
 import wget
+import geoip2
 
 # Path to the temporary location where the update package will be downloaded
 PACKAGE_DOWNLOAD_LOCATION = '/tmp/GeoLite2-City.tar.gz'
@@ -220,10 +221,11 @@ class GeoIP:
         self._update_link = update_link
 
         # Path to the directory where the GeoIP database will be stored.
-        self._database_path = database_path
+        self._database_path = os.path.abspath(
+            os.path.expanduser(database_path))
 
         # Try to retrieve the database if it doesn't exist.
-        if os.path.isfile('{}/GeoLite2-City.mmdb'.format(self._database_path)):
+        if not os.path.isfile('{}/GeoLite2-City.mmdb'.format(self._database_path)):
             self.update_database()
 
     def update_database(self) -> None:
@@ -240,11 +242,11 @@ class GeoIP:
 
         # Download the update package
         wget.download(url=self._update_link,
-                      out=PACKAGE_DOWNLOAD_LOCATION)
+                      out='/tmp/GeoLite2-City.tar.gz')
 
         # Extract the update package
-        tar = tarfile.open(PACKAGE_DOWNLOAD_LOCATION)
-        tar.extractall(path='/tmp', members=GeoIP._find_mmdb)
+        tar = tarfile.open('/tmp/GeoLite2-City.tar.gz')
+        tar.extractall(path='/tmp', members=GeoIP._find_mmdb(tar))
         tar.close()
 
         # Move the database to the requested location
@@ -252,7 +254,7 @@ class GeoIP:
                     dst='{}/GeoLite2-City.mmdb'.format(self._database_path))
 
         # Delete the update package
-        os.remove(PACKAGE_DOWNLOAD_LOCATION)
+        os.remove('/tmp/GeoLite2-City.tar.gz')
 
     def query(self, ip_address: str) -> GeoIPData:
 
@@ -274,6 +276,8 @@ class GeoIP:
 
         if os.path.isfile('{}/GeoLite2-City.mmdb'.format(self._database_path)):
             try:
+                reader = geoip2.database.Reader(
+                    '{}/GeoLite2-City.mmdb'.format(self._database_path))
                 response = reader.city(ip_address)
                 result = GeoIPData(
                     ip_address=ip_address,
@@ -288,6 +292,7 @@ class GeoIP:
 
         return result
 
+    @staticmethod
     def _find_mmdb(members: list):
 
         """
@@ -304,6 +309,6 @@ class GeoIP:
         """
 
         for member in members:
-            if os.path.splittext(member.name)[1] == '.mmdb':
+            if os.path.splitext(member.name)[1] == '.mmdb':
                 member.name = os.path.basename(member.name)
                 yield member

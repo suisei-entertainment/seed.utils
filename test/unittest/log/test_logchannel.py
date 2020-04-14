@@ -27,7 +27,31 @@ import os
 import unittest
 
 # SEED Imports
-from suisei.seed.log import LogChannel
+from suisei.seed.log import LogChannel, LogLevels
+
+# Test data
+BASIC_TEST_CONFIGURATION = \
+{
+    'name': 'testchannel',
+    'defaultloglevel': 'INFO',
+    'targets':
+    []
+}
+
+TEST_CONFIGURATION_WITH_CONSOLE_TARGET = \
+{
+    'name': 'testchannel',
+    'defaultloglevel': 'INFO',
+    'targets':
+    [
+        {
+            'type': 'console',
+            'coloredlogs': 'True',
+            'format': '[%(asctime)s][%(levelname)s]: %(message)s',
+            'dateformat': '%Y-%m-%d %H:%M:%S'
+        }
+    ]
+}
 
 class LogChannelTest(unittest.TestCase):
 
@@ -49,7 +73,51 @@ class LogChannelTest(unittest.TestCase):
         Tests that a log channel can be created.
         """
 
-        return
+        sut = LogChannel(configuration=BASIC_TEST_CONFIGURATION)
+        self.assertEqual(sut.Name, 'testchannel')
+        self.assertEqual(sut.DefaultLogLevel, LogLevels.INFO)
+
+    def test_console_target_loading(self):
+
+        """
+        Tests that a console log target can be used in a log channel.
+        """
+
+        sut = LogChannel(configuration=TEST_CONFIGURATION_WITH_CONSOLE_TARGET)
+        self.assertEqual(sut.Name, 'testchannel')
+        self.assertEqual(sut.DefaultLogLevel, LogLevels.INFO)
+
+    def test_file_target_loading(self):
+
+        """
+        Tests that a file log target can be used in a log channel.
+        """
+
+        pass
+
+    def test_syslog_target_loading(self):
+
+        """
+        Tests that a syslog log target can be used in a log channel.
+        """
+
+        pass
+
+    def test_database_target_loading(self):
+
+        """
+        Tests that a database log target can be used in a log channel.
+        """
+
+        pass
+
+    def test_structured_target_loading(self):
+
+        """
+        Tests that a structured log target can be used in a log channel.
+        """
+
+        pass
 
 def load_tests(loader, tests, pattern):
 
@@ -60,5 +128,10 @@ def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
 
     suite.addTest(LogChannelTest('test_creation'))
+    suite.addTest(LogChannelTest('test_console_target_loading'))
+    suite.addTest(LogChannelTest('test_file_target_loading'))
+    suite.addTest(LogChannelTest('test_syslog_target_loading'))
+    suite.addTest(LogChannelTest('test_database_target_loading'))
+    suite.addTest(LogChannelTest('test_structured_target_loading'))
 
     return suite

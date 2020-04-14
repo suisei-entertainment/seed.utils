@@ -28,6 +28,9 @@ import logging
 # Dependency Imports
 import coloredlogs
 
+# SEED Imports
+from .logtarget import LogTarget
+
 class ConsoleLogTarget(LogTarget):
 
     """
@@ -37,7 +40,7 @@ class ConsoleLogTarget(LogTarget):
         Attila Kovacs
     """
 
-    def __init__(self, logger: Logger, configuration: dict) -> None:
+    def __init__(self, logger: 'Logger', configuration: dict) -> None:
 
         """
         Creates a new ConsoleLogTarget entry.
@@ -126,8 +129,8 @@ class ConsoleLogTarget(LogTarget):
 
         # Set formatter
         self._handler.setFormatter(logging.Formatter(
-                fmt=self._format_string,
-                datefmt=self._date_format_string)
+            fmt=self._format_string,
+            datefmt=self._date_format_string))
 
         # Enable colored logs
         if self._colored_logs:

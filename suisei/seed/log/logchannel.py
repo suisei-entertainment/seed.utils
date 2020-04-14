@@ -26,8 +26,11 @@ Contains implementation of the LogChannel class.
 import logging
 
 # SEED Imports
+from suisei.seed.exceptions import InvalidInputError
+
 from .loglevels import LogLevels, LOG_LEVEL_CONVERSION_MAP
 from .logentry import LogEntry
+from .consolelogtarget import ConsoleLogTarget
 
 class LogChannel:
 
@@ -93,6 +96,8 @@ class LogChannel:
         # writers.
         self._logger.setLevel(logging.DEBUG)
 
+        self._load_targets(configuration)
+
     def write(self, entry: LogEntry) -> None:
 
         """
@@ -156,12 +161,26 @@ class LogChannel:
             # configuraiton.
             self._default_log_level = LogLevels.INFO
 
+    def _load_targets(self, configuration: dict) -> None:
+
+        """
+        Loads the log targets of the channel from its serialized version.
+
+        Args:
+            configuration:      The configuration of the channel.
+
+        Authors:
+            Attila Kovacs
+        """
+
         # Remove all existing log handlers
         self._logger.handlers = []
 
+        targets = []
+
         # Load targets
         try:
-            channels = configuration['targets']
+            targets = configuration['targets']
         except KeyError:
             raise InvalidInputError(
                 'No log targets were found for channel {}'.format(self._name))

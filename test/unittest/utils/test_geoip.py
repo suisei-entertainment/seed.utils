@@ -55,7 +55,7 @@ class GeoIPTest(unittest.TestCase):
     def test_creation(self):
 
         """
-        Tests that a log channel can be created.
+        Tests that a GeoIP object can be created.
         """
 
         sut = GeoIP(update_link=DATABASE_UPDATE_LINK,

@@ -29,3 +29,4 @@ from .servicelocator import ServiceLocator, Service
 from .productversion import ProductVersion
 from .cliprocessor import CliProcessor
 from .geoip import GeoIP, GeoIPData
+from .secrets import Secrets

@@ -23,11 +23,13 @@ Contains the implementation of the HostCPU class.
 """
 
 # Platform Imports
-import logging
 import platform
 import multiprocessing
 
-class HostCPU:
+# SEED Imports
+from suisei.seed.log import LogWriter
+
+class HostCPU(LogWriter):
 
     """
     Utility class to inspect the host CPU of the system.
@@ -178,6 +180,8 @@ class HostCPU:
             Attila Kovacs
         """
 
+        super().__init__(channel_name='suisei.seed.pal', cache_entries=True)
+
         self._architecture = ''
         """
         The CPU architecture of the host system.
@@ -245,7 +249,6 @@ class HostCPU:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
         info = None
 
         try:
@@ -254,11 +257,11 @@ class HostCPU:
             #pylint: disable=import-outside-toplevel
             import cpuinfo
             info = cpuinfo.get_cpu_info()
-            logger.debug('Raw CPU information retrieved from cpuinfo.')
+            self.debug('Raw CPU information retrieved from cpuinfo.')
         except ImportError:
-            logger.warning('The cpuinfo package is not available, only '
-                           'fallback methods will be available to retrieve '
-                           'information on the host CPU.')
+            self.warning('The cpuinfo package is not available, only '
+                         'fallback methods will be available to retrieve '
+                         'information on the host CPU.')
             info = {}
 
         self._detect_architecture(info)
@@ -279,22 +282,19 @@ class HostCPU:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         try:
-            logger.debug('Attempting to retrieve architecture from raw '
-                         'cpuinfo data...')
+            self.debug('Attempting to retrieve architecture from raw '
+                        'cpuinfo data...')
             self._architecture = info['arch']
-            logger.debug('CPU architecture is identified as %s.',
-                         self._architecture)
+            self.debug(f'CPU architecture is identified '
+                        f'as {self._architecture}.')
         except KeyError:
-            logger.debug('Cannot identify CPU architecture from cpuinfo. '
-                         'Falling back to platform.')
+            self.debug('Cannot identify CPU architecture from cpuinfo. '
+                       'Falling back to platform.')
 
             self._architecture = platform.machine().upper()
 
-        logger.debug('CPU architecture is identified as %s.',
-                     self._architecture)
+        self.debug(f'CPU architecture is identified as {self._architecture}.')
 
     def _detect_cpu_count(self, info: dict) -> None:
 
@@ -308,36 +308,34 @@ class HostCPU:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         # Virtual cores
         try:
-            logger.debug('Attempting to retrieve the amount of virtual cores '
-                         'from raw cpuinfo data...')
+            self.debug('Attempting to retrieve the amount of virtual cores '
+                       'from raw cpuinfo data...')
             self._num_cores = info['count']
-            logger.debug('Amount of cores detected: %d', self._num_cores)
+            self.debug(f'Amount of cores detected: {self._num_cores}')
         except KeyError:
-            logger.debug('Cannot identify the amount of cores from cpuinfo, '
-                         'falling back to multiprocessing.')
+            self.debug('Cannot identify the amount of cores from cpuinfo, '
+                       'falling back to multiprocessing.')
 
             self._num_cores = multiprocessing.cpu_count()
-            logger.debug('Amount of cores detected: %d', self._num_cores)
+            self.debug(f'Amount of cores detected: {self._num_cores}')
 
         # Physical cores
         try:
-            logger.debug('Attempting to retrieve the amount of phyisical '
-                         'cores from psuitl...')
+            self.debug('Attempting to retrieve the amount of phyisical '
+                       'cores from psuitl...')
             # Imported here so detection works even without the package
             # installed.
             #pylint: disable=import-outside-toplevel
             import psutil
             self._num_physical_cores = psutil.cpu_count(logical=False)
-            logger.debug('Amount of physical cores detected: %d',
-                         self._num_physical_cores)
+            self.debug(f'Amount of physical cores detected: '
+                       f'{self._num_physical_cores}')
         except ImportError:
-            logger.warning('The psutil package is not available on the host '
-                           'system, amount of physical CPU cores cannot be '
-                           'retrieved.')
+            self.warning('The psutil package is not available on the host '
+                         'system, amount of physical CPU cores cannot be '
+                         'retrieved.')
             self._num_physical_cores = -1
 
     def _detect_cpu_type(self, info: dict) -> None:
@@ -352,55 +350,52 @@ class HostCPU:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         # Vendor ID
         try:
             self._vendor_id = info['vendor_id']
-            logger.debug('Identified CPU vendor ID: %s', self._vendor_id)
+            self.debug(f'Identified CPU vendor ID: {self._vendor_id}')
         except KeyError:
-            logger.warning('Failed to detect the vendor ID of the CPU.')
+            self.warning('Failed to detect the vendor ID of the CPU.')
             self._vendor_id = 'UNKNOWN'
 
         # CPU name
         try:
             self._cpu_name = info['brand']
-            logger.debug('Identified CPU name: %s', self._cpu_name)
+            self.debug(f'Identified CPU name: {self._cpu_name}')
         except KeyError:
-            logger.warning('Failed to detect the name of the CPU.')
+            self.warning('Failed to detect the name of the CPU.')
             self._cpu_name = 'UNKNOWN'
 
         # CPU stepping
         try:
             self._stepping = info['stepping']
-            logger.debug('Identified CPU stepping: %s', self._stepping)
+            self.debug(f'Identified CPU stepping: {self._stepping}')
         except KeyError:
-            logger.warning('Failed to detect the stepping of the CPU.')
+            self.warning('Failed to detect the stepping of the CPU.')
             self._stepping = -1
 
         # CPU model
         try:
             self._model = info['model']
-            logger.debug('Identified CPU model: %s', self._model)
+            self.debug(f'Identified CPU model: {self._model}')
         except KeyError:
-            logger.warning('Failed to detect the model of the CPU.')
+            self.warning('Failed to detect the model of the CPU.')
             self._model = -1
 
         # Extended CPU model
         try:
             self._extended_model = info['extended_model']
-            logger.debug('Identified extended CPU model: %s',
-                         self._extended_model)
+            self.debug(f'Identified extended CPU model: {self._extended_model}')
         except KeyError:
-            logger.warning('Failed to detect the extended model of the CPU.')
+            self.warning('Failed to detect the extended model of the CPU.')
             self._extended_model = -1
 
         # CPU family
         try:
             self._family = info['family']
-            logger.debug('Identified CPU family: %s', self._family)
+            self.debug(f'Identified CPU family: {self._family}')
         except KeyError:
-            logger.warning('Failed to detect the family of the CPU.')
+            self.warning('Failed to detect the family of the CPU.')
             self._family = -1
 
     def _detect_cpu_speed(self, info: dict) -> None:
@@ -415,13 +410,11 @@ class HostCPU:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         try:
             self._max_speed = info['hz_advertised']
-            logger.debug('Maximum CPU speed: %s', self._max_speed)
+            self.debug(f'Maximum CPU speed: {self._max_speed}')
         except KeyError:
-            logger.warning('Failed to detect the maximum CPU speed.')
+            self.warning('Failed to detect the maximum CPU speed.')
             self._max_speed = 'UNKNOWN'
 
     def _detect_cache_data(self, info: dict) -> None:
@@ -436,11 +429,9 @@ class HostCPU:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         try:
             self._l2_cache_size = info['l2_cache_size']
-            logger.debug('Size of the L2 cache: %s', self._l2_cache_size)
+            self.debug(f'Size of the L2 cache: {self._l2_cache_size}')
         except KeyError:
-            logger.warning('Failed to detect the cache size of the CPU.')
+            self.warning('Failed to detect the cache size of the CPU.')
             self._l2_cache_size = 'UNKNOWN'

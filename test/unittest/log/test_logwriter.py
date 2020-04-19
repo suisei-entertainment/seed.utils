@@ -64,12 +64,12 @@ class LogWriterTest(unittest.TestCase):
         # STEP #1 - Log writer can be created without a logging service if
         #           caching is enabled
         sut = LogWriter(channel_name='test', cache_entries=True)
-        self.assertIsNone(sut.LogLevel)
+        self.assertEquals(sut.LogLevel, LogLevels.DEBUG)
 
         # STEP #2 - Log writer can be created without a logging service if
         #           caching is not enabled
         sut = LogWriter(channel_name='test', cache_entries=False)
-        self.assertIsNone(sut.LogLevel)
+        self.assertEquals(sut.LogLevel, LogLevels.DEBUG)
 
         # STEP #3 - Log writer can be created if there is a logging service
         service = TestLoggingService()
@@ -85,7 +85,7 @@ class LogWriterTest(unittest.TestCase):
 
         # STEP #1 - Log level can be overwritten.
         sut = LogWriter(channel_name='test', cache_entries=False)
-        self.assertIsNone(sut.LogLevel)
+        self.assertEquals(sut.LogLevel, LogLevels.DEBUG)
         sut.overwrite_log_level(new_log_level=LogLevels.WARNING)
         self.assertEquals(sut.LogLevel, LogLevels.WARNING)
         self.assertTrue(sut.IsLogLevelOverwritten)

@@ -30,8 +30,9 @@ import geoip2.database
 
 # SEED Imports
 from suisei.seed.exceptions import InvalidInputError
+from suisei.seed.log import LogWriter
 
-class HostLocation:
+class HostLocation(LogWriter):
 
     """
     Utility class to determine the location of the host based on it's GeoIP
@@ -122,6 +123,8 @@ class HostLocation:
             Attila Kovacs
         """
 
+        super().__init__(channel_name='suisei.seed.pal', cache_entries=True)
+
         # The continent where the IP address is located
         self._continent = 'UNKNOWN'
 
@@ -139,6 +142,7 @@ class HostLocation:
 
         full_path = os.path.abspath(os.path.expanduser(
             '{}/GeoLite2-City.mmdb'.format(database_path)))
+        self.debug(f'Loading GeoIP database from {full_path}')
 
         if not os.path.isfile(full_path):
             raise InvalidInputError('GeoIP database was not found.')
@@ -147,10 +151,13 @@ class HostLocation:
 
         reader = geoip2.database.Reader(full_path)
         try:
+            self.debug(f'Trying to locate public IP ({public_ip}) in the '
+                       f'GeoIP database.')
             response = reader.city(public_ip)
         except geoip2.errors.AddressNotFoundError:
             # IP address not found
-            pass
+            self.warning(f'Public IP ({public_ip}) was not found in the '
+                         f'GeoIP database.')
 
         if response:
             self._continent = response.continent.name
@@ -160,3 +167,6 @@ class HostLocation:
             self._location = (
                 response.location.latitude,
                 response.location.longitude)
+            self.debug(f'Location of public IP {public_ip}: {self._continent} '
+                       f'- {self._country} - {self._city} '
+                       f'({self._postal_code})')

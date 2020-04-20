@@ -22,15 +22,14 @@
 Contains the implementation of the PhysicalInterface class.
 """
 
-# Platform Imports
-import logging
-
 # SEED Imports
+from suisei.seed.log import LogWriter
+
 from .linkaddress import LinkAddress
 from .ipv4address import IPv4Address
 from .ipv6address import IPv6Address
 
-class PhysicalInterface:
+class PhysicalInterface(LogWriter):
 
     """
     Represents a single physical network interface.
@@ -56,9 +55,14 @@ class PhysicalInterface:
         """
         Creates a new PhysicalInterface instance.
 
+        Args:
+            interface_name:     Name of the physical interface.
+
         Authors:
             Attila Kovacs
         """
+
+        super().__init__(channel_name='suisei.seed.pal', cache_entries=True)
 
         self._name = interface_name
         """
@@ -117,19 +121,14 @@ class PhysicalInterface:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         if self.has_link_address(address):
-            logger.warning('Link address %s already exists in physical '
-                           'interface %s, won\'t be added twice.',
-                           address,
-                           self._name)
+            self.warning(f'Link address {address} already exists in physical '
+                         f'interface {self._name}, won\'t be added twice.')
             return
 
         self._link_addresses[address] = LinkAddress(address)
-        logger.debug('Link address %s was added to physical interface %s.',
-                     address,
-                     self._name)
+        self.debug(f'Link address {address} was added to physical interface '
+                   f'{self._name}.')
 
     def has_ipv4_address(self, address: str) -> bool:
 
@@ -180,22 +179,17 @@ class PhysicalInterface:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         if self.has_ipv4_address(address):
-            logger.warning('IPv4 address %s already exists in physical '
-                           'interface %s, won\'t be added twice.',
-                           address,
-                           self._name)
+            self.warning(f'IPv4 address {address} already exists in physical '
+                         f'interface {self._name}, won\'t be added twice.')
 
         self._ipv4_addresses[address] = IPv4Address(address,
                                                     netmask,
                                                     broadcast_address,
                                                     is_localhost,
                                                     is_link_local_address)
-        logger.debug('IPv4 address %s was added to physical interface %s',
-                     address,
-                     self._name)
+        self.debug(f'IPv4 address {address} was added to physical interface '
+                   f'{self._name}.')
 
     def has_ipv6_address(self, address: str) -> bool:
 
@@ -246,19 +240,14 @@ class PhysicalInterface:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         if self.has_ipv6_address(address):
-            logger.warning('IPv6 address %s already exists in physical '
-                           'interface %s, won\'t be added twice.',
-                           address,
-                           self._name)
+            self.warning(f'IPv6 address {address} already exists in physical '
+                         f'interface {self._name}, won\'t be added twice.')
 
         self._ipv6_addresses[address] = IPv6Address(address,
                                                     netmask,
                                                     broadcast_address,
                                                     is_localhost,
                                                     is_link_local_address)
-        logger.debug('IPv6 address %s was added to physical interface %s',
-                     address,
-                     self._name)
+        self.debug(f'IPv6 address {address} was added to physical interface '
+                   f'{self._name}')

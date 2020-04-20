@@ -23,15 +23,15 @@ Contains the implementation of the HostNetworking class.
 """
 
 # Platform Imports
-import logging
 import requests
 
 # SEED Imports
 from suisei.seed.exceptions import InvalidInputError
+from suisei.seed.log import LogWriter
 from .physicalinterface import PhysicalInterface
 from .hostlocation import HostLocation
 
-class HostNetworking:
+class HostNetworking(LogWriter):
 
     """
     Utility class that represents the networking capabilities of the host
@@ -91,6 +91,8 @@ class HostNetworking:
             Attila Kovacs
         """
 
+        super().__init__(channel_name='suisei.seed.pal', cache_entries=True)
+
         # List of phyisical network interfaces in the host system.
         self._physical_interfaces = {}
 
@@ -126,8 +128,7 @@ class HostNetworking:
 
         return False
 
-    @staticmethod
-    def _get_interfaces() -> list:
+    def _get_interfaces(self) -> list:
 
         """
         Collects the network interfaces on the host system using netifaces.
@@ -139,23 +140,21 @@ class HostNetworking:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         interfaces = []
 
         try:
-            logger.debug('Attempting to retrieve network interfaces by using '
-                         'netifaces...')
+            self.debug('Attempting to retrieve network interfaces by using '
+                       'netifaces...')
             # Imported here so detection works even without the package
             # installed.
             #pylint: disable=import-outside-toplevel
             import netifaces
             interfaces = netifaces.interfaces()
-            logger.debug('Network interfaces retrieved successfully.')
+            self.debug('Network interfaces retrieved successfully.')
         except ImportError:
-            logger.warning('The netifaces package is not available on '
-                           'the host system. Network interfaces cannot be '
-                           'retrieved.')
+            self.warning('The netifaces package is not available on '
+                         'the host system. Network interfaces cannot be '
+                         'retrieved.')
 
         return interfaces
 
@@ -176,8 +175,8 @@ class HostNetworking:
 
         return self._physical_interfaces[nwif]
 
-    @staticmethod
-    def _add_link_addresses(physical_interface: PhysicalInterfaces,
+    def _add_link_addresses(self,
+                            physical_interface: PhysicalInterfaces,
                             addresses: list) -> None:
 
         """
@@ -191,11 +190,9 @@ class HostNetworking:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         try:
-            logger.debug('Adding link layer addresses to interface %s',
-                         physical_interface.Name)
+            self.debug(f'Adding link layer addresses to interface '
+                       f'{physical_interface.Name}')
             # Imported here so detection works even without the package
             # installed.
             #pylint: disable=import-outside-toplevel
@@ -203,16 +200,15 @@ class HostNetworking:
             for address in addresses[netifaces.AF_LINK]:
                 physical_interface.add_link_address(address['addr'])
         except KeyError:
-            logger.debug(
-                'No link layer addresses found for interface %s',
-                physical_interface.Name)
+            self.debug(f'No link layer addresses found for interface '
+                       f'{physical_interface.Name}')
         except ImportError:
-            logger.warning('The netifaces package is not available on '
-                           'the host system. Network interfaces cannot be '
-                           'retrieved.')
+            self.warning('The netifaces package is not available on '
+                         'the host system. Network interfaces cannot be '
+                         'retrieved.')
 
-    @staticmethod
-    def _add_ipv4_addresses(physical_interface: PhysicalInterfaces,
+    def _add_ipv4_addresses(self,
+                            physical_interface: PhysicalInterfaces,
                             addresses: list) -> None:
 
         """
@@ -226,11 +222,9 @@ class HostNetworking:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         try:
-            logger.debug('Adding IPv4 addresses to interface %s',
-                         physical_interface.Name)
+            self.debug(f'Adding IPv4 addresses to interface '
+                       f'{physical_interface.Name}')
             # Imported here so detection works even without the package
             # installed.
             #pylint: disable=import-outside-toplevel
@@ -254,16 +248,15 @@ class HostNetworking:
                     is_localhost=is_locahost,
                     is_link_local_address=is_link_local)
         except KeyError:
-            logger.debug(
-                'No IPv4 addresses found for interface %s',
-                physical_interface.Name)
+            self.debug(f'No IPv4 addresses found for interface '
+                       f'{physical_interface.Name}')
         except ImportError:
-            logger.warning('The netifaces package is not available on '
-                           'the host system. Network interfaces cannot be '
-                           'retrieved.')
+            self.warning('The netifaces package is not available on '
+                         'the host system. Network interfaces cannot be '
+                         'retrieved.')
 
-    @staticmethod
-    def _add_ipv6_addresses(physical_interface: PhysicalInterfaces,
+    def _add_ipv6_addresses(self,
+                            physical_interface: PhysicalInterfaces,
                             addresses: list) -> None:
 
         """
@@ -277,11 +270,9 @@ class HostNetworking:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         try:
-            logger.debug('Adding IPv6 addresses to interface %s',
-                         physical_interface.Name)
+            self.debug(f'Adding IPv6 addresses to interface '
+                       f'{physical_interface.Name}')
             # Imported here so detection works even without the package
             # installed.
             #pylint: disable=import-outside-toplevel
@@ -305,13 +296,12 @@ class HostNetworking:
                     is_localhost=is_locahost,
                     is_link_local_address=is_link_local)
         except KeyError:
-            logger.debug(
-                'No IPv6 addresses found for interface %s',
-                physical_interface.Name)
+            self.debug(f'No IPv6 addresses found for interface '
+                       f'{physical_interface.Name}')
         except ImportError:
-            logger.warning('The netifaces package is not available on '
-                           'the host system. Network interfaces cannot be '
-                           'retrieved.')
+            self.warning('The netifaces package is not available on '
+                         'the host system. Network interfaces cannot be '
+                         'retrieved.')
 
     def _detect_networking(self, interfaces: list) -> None:
 
@@ -324,8 +314,6 @@ class HostNetworking:
         Authors:
             Attila Kovacs
         """
-
-        logger = logging.getLogger('suisei.seed.pal')
 
         for nwif in interfaces:
 
@@ -341,9 +329,9 @@ class HostNetworking:
                 import netifaces
                 addresses = netifaces.ifaddresses(nwif)
             except ImportError:
-                logger.warning('The netifaces package is not available on '
-                               'the host system. Network addresses cannot be '
-                               'retrieved.')
+                self.warning('The netifaces package is not available on '
+                             'the host system. Network addresses cannot be '
+                             'retrieved.')
                 return
 
             # Link layer addresses
@@ -367,19 +355,16 @@ class HostNetworking:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         if self.has_network_interface(interface_name):
-            logger.warning('Physical interface %s already exists, won\'t be '
-                           'created again.',
-                           interface_name)
+            self.warning(f'Physical interface {interface_name} already '
+                         f'exists, won\'t be created again.')
             return
 
         self._physical_interfaces[interface_name] = \
             PhysicalInterface(interface_name)
 
-        logger.debug('New physical network interface (%s) has been created.',
-                     interface_name)
+        self.debug(f'New physical network interface ({interface_name}) has '
+                   f'been created.')
 
     def _detect_public_ip(self) -> None:
 
@@ -390,21 +375,19 @@ class HostNetworking:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         try:
             ip = requests.get('https://api.ipify.org', timeout=1).text
         except requests.exceptions.Timeout:
-            logger.warning('Failed to detect public IP. Request timeout.')
+            self.warning('Failed to detect public IP. Request timeout.')
             return
 
         self._public_ip = ip
-        logger.debug('Public IP is detected as %s', self._public_ip)
+        self.debug(f'Public IP is detected as {self._public_ip}.')
 
         try:
             self._host_location = HostLocation(
                 public_ip=self._public_ip,
                 database_path=self._geoip_database_path)
         except InvalidInputError:
-            logger.debug('Failed to detect host location. GeoIP databasae is '
+            self.debug('Failed to detect host location. GeoIP databasae is '
                          'not available.')

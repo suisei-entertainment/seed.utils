@@ -22,10 +22,10 @@
 Contains the implementation of the HostMemory class.
 """
 
-# Platform Imports
-import logging
+# SEED Imports
+from suisei.seed.log import LogWriter
 
-class HostMemory:
+class HostMemory(LogWriter):
 
     """
     Utility class that represents the memory of the host system.
@@ -55,7 +55,12 @@ class HostMemory:
             Attila Kovacs
         """
 
+        super().__init__(channel_name='suisei.seed.pal', cache_entries=True)
+
         self._total_ram = 0
+        """
+        Total amount of system memory.
+        """
 
         self._get_total_ram()
 
@@ -68,20 +73,18 @@ class HostMemory:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
         try:
-            logger.debug('Attempting to retrieve the total amount of host '
-                         'memory through psutil...')
+            self.debug('Attempting to retrieve the total amount of host '
+                        'memory through psutil...')
             # Imported here so detection works even without the package
             # installed.
             #pylint: disable=import-outside-toplevel
             import psutil
             memory = psutil.virtual_memory()
             self._total_ram = memory.total
-            logger.debug('Total amount of memory on the host system: %d MB',
-                         self._total_ram)
+            self.debug(f'Total amount of memory on the host system: '
+                       f'{self._total_ram} MB')
         except ImportError:
-            logger.warning('The psutil library is not available on the host '
-                           'system. Memory information cannot be retrieved.')
+            self.warning('The psutil library is not available on the host '
+                         'system. Memory information cannot be retrieved.')
             self._total_ram = -1

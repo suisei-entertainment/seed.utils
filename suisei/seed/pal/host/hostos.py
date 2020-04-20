@@ -23,15 +23,15 @@ Contains the implementation of the HostOS class.
 """
 
 # Platform Imports
-import logging
 import platform
 
 # SEED Imports
 from suisei.seed.exceptions import MissingRequirementError
+from suisei.seed.log import LogWriter
 
 from .hostdistribution import HostDistribution
 
-class HostOS:
+class HostOS(LogWriter):
 
     """
     Utility class that represents the host operating system.
@@ -110,6 +110,8 @@ class HostOS:
             Attila Kovacs
         """
 
+        super().__init__(channel_name='suisei.seed.pal', cache_entries=True)
+
         self._platform = ''
         """
         Name of the host platform.
@@ -146,29 +148,27 @@ class HostOS:
             Attila Kovacs
         """
 
-        logger = logging.getLogger('suisei.seed.pal')
-
-        logger.debug('Detecting host operating system...')
+        self.debug('Detecting host operating system...')
 
         self._platform = platform.platform()
-        logger.debug('Host platform is identified as %s', self._platform)
+        self.debug(f'Host platform is identified as {self._platform}.')
 
         self._os = platform.system()
-        logger.debug('Host operating system is identified as %s', self._os)
+        self.debug(f'Host operating system is identified as {self._os}.')
 
         self._os_release = platform.release()
-        logger.debug('Host operating system release is identified as %s',
-                     self._os_release)
+        self.debug(f'Host operating system release is identified as '
+                   f'{self._os_release}.')
 
         self._os_version = platform.version()
-        logger.debug('Host operating system version is identified as %s',
-                     self._os_version)
+        self.debug(f'Host operating system version is identified as '
+                   f'{self._os_version}.')
 
         # Gather additional information on Linux by using the distro package
         if self._os.lower() == 'linux':
             try:
                 self._distro = HostDistribution()
             except MissingRequirementError:
-                logger.warning(
+                self.warning(
                     'The distro package is not installed on the host system, '
                     'not all operating system information can be retrieved.')
